@@ -56,7 +56,7 @@ class dbSync{
 
             if($exist==false){
                 //Insertamos la fila.
-                $sql="INSERT INTO ".$tabla." (".implode(", ",array_keys($fila)).") VALUES ('".implode("', '",array_values($row))."')";
+                $sql="INSERT INTO ".$tabla." (".implode(", ",array_keys($fila)).") VALUES ('".implode("', '",array_values($fila))."')";
                 //Lanzar peticion.
                 $this->db2->_db_consulta($sql);
             }
