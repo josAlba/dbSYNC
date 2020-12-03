@@ -11,6 +11,18 @@
         public static $db       ="";
 
     }
+    
+    class alert1{
+
+        public static $activo  =false;
+
+        public static $limit   =array(
+            50
+        );
+
+        public static $interval =10;
+
+    }
 
     class telegram1{
 

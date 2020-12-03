@@ -3,6 +3,7 @@
 namespace dbSYNC\lib;
 
 use dbSYNC\conf\db1;
+use dbSYNC\conf\alert1;
 use dbSYNC\driver\mysql;
 use dbSYNC\mensajes\telegram;
 use dbSYNC\conf\telegram1;
@@ -156,7 +157,49 @@ class processos{
             $this->commands();
             echo "\n---:Esperando ".$this->rr." segundos";
             sleep($this->rr);
+
+            if($this->vuelta>3){
+                exit();
+            }
+            $this->vuelta++;
         }
+    }
+
+    private $ultimoAviso=0;
+    private function alert($conexiones=0){
+
+        if(alert1::$activo==false){
+            return;
+        }
+
+        $time   = time();
+
+        if( floatval($time) < floatval(floatval(alert1::$interval) + $this->ultimoAviso) ){
+            return;
+        }
+
+        $this->ultimoAviso=$time;
+
+
+        $alertas = alert1::$limit;
+
+        for($i=0;$i<count($alertas);$i++){
+
+            if($alertas[$i]<$conexiones){
+
+                if(telegram1::$token!=""){ 
+
+                    echo "\n---: Enviando aviso.";
+                    telegram::sendMessage(
+                        "DB Avisa - ".$conexiones." conexiones"
+                    );
+
+                }
+                break;
+            }
+
+        }
+
     }
 
     /**
@@ -191,6 +234,8 @@ class processos{
             return;
 
         }
+
+        $this->alert($r->num_rows);
 
         if($list==true){
 
@@ -247,7 +292,7 @@ class processos{
             if($r->num_rows > 0){
                
                 telegram::sendMessage(
-                    "DB Dice: $r->num_rows processos matados."
+                    "DB Dice - $r->num_rows processos matados."
                 );
                 
             }        
