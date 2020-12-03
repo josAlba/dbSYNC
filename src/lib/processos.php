@@ -4,6 +4,8 @@ namespace dbSYNC\lib;
 
 use dbSYNC\conf\db1;
 use dbSYNC\driver\mysql;
+use dbSYNC\mensajes\telegram;
+use dbSYNC\conf\telegram1;
 
 class processos{
 
@@ -93,9 +95,11 @@ class processos{
         }
 
         //Comprueba si tiene que ser recursiva.
-        if($this->vuelta==0){
-            $this->recursivo();
-            return;
+        if($this->r==true){
+            if($this->vuelta==0){
+                $this->recursivo();
+                return;
+            }
         }
 
         //Comandos.
@@ -233,13 +237,23 @@ class processos{
             
             }
 
-            $this->mysql->_db_consulta($command);
+            //$this->mysql->_db_consulta($command);
             echo "\n[x] ".$pid." ";
 
         }
 
-        
+        if(telegram1::$token!=""){        
+         
+            if($r->num_rows > 0){
+               
+                telegram::sendMessage(
+                    "DB Dice: $r->num_rows processos matados."
+                );
+                
+            }        
 
+        }
+        
     }
     /**
      * Recupera el parametro y el valor.

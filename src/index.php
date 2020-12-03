@@ -11,5 +11,7 @@
 
     $x->commands();
 
+    echo "\n----------";
+
     echo "\n";
     

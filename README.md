@@ -17,7 +17,10 @@ El control de procesos se puede monitorizar y eliminar procesos de mysql por fil
 
 <a name="item1"></a>
 ## Control de procesos
-Controla los procesos de la base de datos mysql, pudiendo listarlos y matar procesos ( en mysql y rds )
+Controla los procesos de la base de datos mysql, pudiendo listarlos y matar procesos ( en mysql y rds ).
+<br>
+Aviso por telegram de los procesos matados.
+
 ### Cargar libreria
 
 ```php

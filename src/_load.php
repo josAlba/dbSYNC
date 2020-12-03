@@ -6,3 +6,4 @@
     include(__DIR__.'/conf.php');
     include(__DIR__.'/lib/processos.php');
     include(__DIR__.'/lib/sincronizar.php');
+    include(__DIR__.'/mensajes/telegram.php');

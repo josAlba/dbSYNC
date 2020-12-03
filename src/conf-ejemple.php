@@ -12,6 +12,12 @@
 
     }
 
+    class telegram1{
+
+        public static $token    = "";
+        public static $sala     = 0;
+    }
+
     //Sincronizador
     class db2{
 
