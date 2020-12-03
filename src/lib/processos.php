@@ -237,7 +237,7 @@ class processos{
             
             }
 
-            //$this->mysql->_db_consulta($command);
+            $this->mysql->_db_consulta($command);
             echo "\n[x] ".$pid." ";
 
         }
