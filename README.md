@@ -2,9 +2,11 @@
 Conjunto de scripts para control de bases de datos mysql.
 
 ## Indice
+- [**Cargar libreria**](#item0)
 - [**Control de procesos**](#item1)
 - [**Sincronizar**](#item2)
 
+<a name="item0"></a>
 ## Cargar libreria
 ```php
 <?php
