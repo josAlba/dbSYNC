@@ -7,11 +7,32 @@ use dbSYNC\driver\mysql;
 
 class processos{
 
+    /**
+     * Script lanzado.
+     */
     private $p;
+    /**
+     * Objeto mysql.
+     */
     private $mysql;
+    /**
+     * Modo RDS ( Amazon ).
+     */
     private $rds;
+
+    /**
+     * Si es recursiva.
+     */
     private $r;
+    /**
+     * Segundos de espera.
+     */
     private $rr=2;
+
+    /**
+     * Parametros del script.
+     */
+    private $parametros;
 
     public function __construct($p,$rds=true){
 
@@ -20,19 +41,49 @@ class processos{
         $this->rds      = $rds;
 
         echo "\n [X] Conectado";
+
         if($rds==true){
             echo "\n [X] RDS";
         }else{
             echo "\n [X] RDS";
         }
 
+        $this->ValidarParametros();
+        
+
         sleep(1);
 
     }
 
-    public function commands($recursive=false){
+    private function ValidarParametros(){
 
-        $this->r = $recursive;
+        $this->parametros=array(
+            'u'    =>"",
+            'c'    =>0,
+            't'    =>0
+        );
+        //Nos saltamos el nombre del fichero y el primer parametro.
+        for($i=2;$i<count($this->p);$i++){
+
+            $c = $this->command_param($this->p[$i]);
+
+            $this->parametros[$c['command']]=$c['param'];
+
+        }
+        if(isset($this->parametros['r'])){
+
+            $this->r    =true;
+            $this->rr   =$this->parametros['r'];
+
+        }
+        echo "\n [X] Parametros";
+
+    }
+
+    /**
+     * Comprueba el comando y lo lanza.
+     */
+    public function commands(){
 
         //No existe un comando.
         if(count($this->p) <= 1){
@@ -41,17 +92,21 @@ class processos{
             return;
         }
 
+        //Comprueba si tiene que ser recursiva.
+        if($this->vuelta==0){
+            $this->recursivo();
+            return;
+        }
+
         //Comandos.
         if($this->p[1]=="kill"){
 
-            $this->command_conexiones($this->p);
-            $this->recursivo();
+            $this->command_conexiones();
             return;
 
         }else if($this->p[1]=="list"){
 
-            $this->command_conexiones($this->p,true);
-            $this->recursivo();
+            $this->command_conexiones(true);
             return;
 
         }else{
@@ -63,6 +118,9 @@ class processos{
 
     }
 
+    /**
+     * Muestra la ayuda de comandos en la terminal.
+     */
     private function showHelp(){
 
         echo "\n";
@@ -80,58 +138,39 @@ class processos{
         echo "\n |__.t :: Recursividad del comando en segundos ( ejemple: t=1 )";
     }
 
+    private $vuelta=0;
     private function recursivo(){
 
         if($this->r==false){
             return;
         }
+        $this->vuelta++;
+        //Nos metemos en recursivo.
+        while (true) {
 
-        //echo "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-        echo "---:Esperando ".$this->rr." segundos";
-        sleep($this->rr);
-        system('clear');
-        $this->commands(true);
-        $this->recursivo();
+            system('clear');
+            $this->commands();
+            echo "\n---:Esperando ".$this->rr." segundos";
+            sleep($this->rr);
+        }
     }
 
-    private function command_conexiones($tp,$list=false){
-
-        /**
-         * u = Usuario.
-         * c = Conexiones.
-         * t = Tiempo de las conexiones.
-         */
-        $filtro=array(
-            'u'    =>"",
-            'c'    =>0,
-            't'    =>0
-        );
-        //Nos saltamos el nombre del fichero y el primer parametro.
-        for($i=2;$i<count($this->p);$i++){
-
-            $c = $this->command_param($this->p[$i]);
-
-            $filtro[$c['command']]=$c['param'];
-
-        }
-
-        if(isset($filtro['r'])){
-
-            $this->r    =true;
-            $this->rr   =$filtro['r'];
-
-        }
+    /**
+     * Funcion para controlar los procesos activos de la base de datos.
+     * @param boolean $list Si tiene que mostrar la consulta.
+     */
+    private function command_conexiones($list=false){
 
         $sql="SELECT * FROM `information_schema`.`processlist` WHERE 1 ";
-        if($filtro['u'] !=""){
+        if($this->parametros['u'] !=""){
 
             //Filtramos por usuario.
-            $sql.=" AND `USER`='".$filtro['u']."'";
+            $sql.=" AND `USER`='".$this->parametros['u']."'";
 
-        }else if(intval($filtro['t']) > 0){
+        }else if(intval($this->parametros['t']) > 0){
 
             //Filtramos por tiempo de conexion.
-            $sql.=" AND `TIME` > ".$filtro['t'];
+            $sql.=" AND `TIME` > ".$this->parametros['t'];
 
         }
 
@@ -141,7 +180,7 @@ class processos{
             echo "\n No contiene filas.";
             return;
         }
-        if(intval($filtro['c']) > $r->num_rows){
+        if(intval($this->parametros['c']) > $r->num_rows){
 
             //Si el numero de conexiones recuperado es menor que..., salimos.
             echo "\n No se alcanzado el maximo de conxiones.";
@@ -194,7 +233,6 @@ class processos{
             
             }
 
-            
             $this->mysql->_db_consulta($command);
             echo "\n[x] ".$pid." ";
 

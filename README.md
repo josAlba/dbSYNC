@@ -1,5 +1,7 @@
 # dbSync
 Conjunto de scripts para control de bases de datos mysql.
+<br>
+El control de procesos se puede monitorizar y eliminar procesos de mysql por filtros.
 
 ## Indice
 - [**Cargar libreria**](#item0)
