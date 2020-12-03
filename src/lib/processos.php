@@ -158,10 +158,6 @@ class processos{
             echo "\n---:Esperando ".$this->rr." segundos";
             sleep($this->rr);
 
-            if($this->vuelta>3){
-                exit();
-            }
-            $this->vuelta++;
         }
     }
 
