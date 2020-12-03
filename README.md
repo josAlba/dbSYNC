@@ -1,12 +1,18 @@
 # dbSync
 Conjunto de scripts para control de bases de datos mysql.
-## Cargar libreria.
+
+## Indice
+- [**Control de procesos**](#item1)
+- [**Sincronizar**](#item2)
+
+## Cargar libreria
 ```php
 <?php
     include('src/_load.php');
 ```
 
-## Control de procesos.
+<a name="item1"></a>
+## Control de procesos
 Controla los procesos de la base de datos mysql, pudiendo listarlos y matar procesos ( en mysql y rds )
 ### Cargar libreria
 
@@ -59,7 +65,7 @@ php index.php <kill><list> r=1
 ```
 
 
-
+<a name="item2"></a>
 ## Sincronizar mySql
 Sincroniza dos bases de datos mySql. Sincronizando tablas o bases de datos enteras.
 <br>
