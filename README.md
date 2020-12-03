@@ -65,6 +65,12 @@ Parametro **c**, Filtra para que solo se aplique la accion si hay más de x cnex
 ```bash
 php index.php <kill><list> c=10
 ```
+### Comando
+Parametro **m**, Filtra por el tipo de comando lanzado por ejemplo "Query" o "Sleep".
+```bash
+php index.php <kill><list> m=Sleep
+```
+
 ### Recursividad
 Parametro **r**, Indica que la accion sera recursiva y cuantos segundos se tiene que esperar entre accion y accion.
 ```bash

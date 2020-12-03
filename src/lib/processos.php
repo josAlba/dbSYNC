@@ -168,20 +168,17 @@ class processos{
             return;
         }
 
-        $time   = time();
-
-        if( floatval($time) < floatval(floatval(alert1::$interval) + $this->ultimoAviso) ){
-            return;
-        }
-
-        $this->ultimoAviso=$time;
-
-
         $alertas = alert1::$limit;
 
         for($i=0;$i<count($alertas);$i++){
 
             if($alertas[$i]<$conexiones){
+
+                $time   = time();
+                if( floatval($time) < floatval(floatval(alert1::$interval) + $this->ultimoAviso) ){
+                    return;
+                }
+                $this->ultimoAviso=$time;
 
                 if(telegram1::$token!=""){ 
 
@@ -205,15 +202,23 @@ class processos{
     private function command_conexiones($list=false){
 
         $sql="SELECT * FROM `information_schema`.`processlist` WHERE 1 ";
+        
         if($this->parametros['u'] !=""){
 
             //Filtramos por usuario.
             $sql.=" AND `USER`='".$this->parametros['u']."'";
 
-        }else if(intval($this->parametros['t']) > 0){
+        }
+        if(intval($this->parametros['t']) > 0){
 
             //Filtramos por tiempo de conexion.
             $sql.=" AND `TIME` > ".$this->parametros['t'];
+
+        }
+        if(isset($this->parametros['m'])){
+
+            //Filtramos por tiempo de conexion.
+            $sql.=" AND `COMMAND` = '".$this->parametros['m']."'";
 
         }
 
